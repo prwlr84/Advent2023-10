@@ -4,22 +4,22 @@ from input import input_string
 grid = [list(line) for line in input_string.split('\n')]
 
 
-def find_next_part(letter, direction, coordinates):
-    print(len(coordinates), coordinates)
-    r, c = coordinates
+def find_next_tube(current_letter, input_direction, current_coordinates):
+    r, c = current_coordinates
+    if current_letter == 'S': return [r, c, 'Finish']
     legend = {
         'F': { 'left': [r + 1, c, 'down'], 'up': [r, c + 1, 'right']},
         '|': { 'up': [r - 1, c, 'up'], 'down': [r + 1, c, 'down']},
         'L': { 'left': [r - 1, c, 'up'], 'down': [r, c + 1, 'right']},
         '-': { 'right': [r, c + 1, 'right'], 'left': [r, c - 1, 'left']},
         'J': { 'right': [r - 1, c, 'up'], 'down': [r, c - 1, 'left']},
-        '7': { 'right': [r + 1, c, 'down'], 'up': [r - 1, c, 'left']}
+        '7': { 'right': [r + 1, c, 'down'], 'up': [r, c - 1, 'left']},
     }
 
-    return legend[letter][direction]
+    return legend[current_letter][input_direction]
 
 
-def return_letter(r, c):
+def return_type(r, c):
     return grid[r][c]
 
 
@@ -43,17 +43,17 @@ def find_start_coordinates(lists):
 
 def get_furthest_point():
     start = find_start_coordinates(grid)
-    letter, current, direction = find_first_part(start)
-    print(letter, current, direction)
+    tube_type, current, direction = find_first_part(start)
+    print(tube_type, current, direction)
     steps = 0
 
     while current != start or steps < 16:
-        r, c, direction = find_next_part(letter, direction, current)
-        letter = return_letter(r, c)
+        r, c, direction = find_next_tube(tube_type, direction, current)
+        tube_type = return_type(r, c)
         current = [r, c]
         steps += 1
 
-    print(start, current, steps, 'XXXXXXXXXXXXXXXXXXXX')
+    print(round(steps/2))
 
 
 if __name__ == '__main__':
